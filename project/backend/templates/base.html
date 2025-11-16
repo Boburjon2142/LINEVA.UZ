@@ -132,9 +132,11 @@
         <ul class="nav-menu collapse d-lg-flex list-unstyled flex-wrap gap-3 mb-0" id="navMenu">
           <li><a href="{% url 'landing' %}">Bosh sahifa</a></li>
           <li><a href="{% url 'orders_public' %}">Buyurtma holati</a></li>
+          {% if user.is_authenticated and user.is_owner %}
           <li><a href="{% url 'owner_dashboard' %}">Kabinet</a></li>
           <li><a href="{% url 'owner_designs' %}">Dizaynlar</a></li>
           <li><a href="{% url 'owner_orders' %}">Buyurtmalar</a></li>
+          {% endif %}
           <li class="d-lg-none mt-2">
             <div class="d-flex flex-column gap-2">
               {% if user.is_authenticated and user.is_owner %}
