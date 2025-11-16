@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Yangi dizayn{% endblock %}
+{% block content %}
+<div class="dashboard-wrapper">
+  <aside class="dashboard-sidebar">
+    <h5 class="mb-3">Kabinet</h5>
+    <ul class="list-unstyled vstack gap-2">
+      <li><a class="btn btn-light w-100" href="{% url 'owner_dashboard' %}">Umumiy ma'lumot</a></li>
+      <li><a class="btn btn-primary w-100" href="{% url 'owner_designs' %}">Dizaynlar</a></li>
+      <li><a class="btn btn-light w-100" href="{% url 'owner_orders' %}">Buyurtmalar</a></li>
+    </ul>
+  </aside>
+  <section class="dashboard-content">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h2 class="h4 mb-3">Yangi dizayn yuklash</h2>
+        <form method="post" enctype="multipart/form-data" class="row g-3">
+          {% csrf_token %}
+          {% for field in form %}
+          <div class="col-12">
+            <label class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% for error in field.errors %}
+            <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+          {% endfor %}
+          <div class="col-12">
+            <button class="btn btn-primary" type="submit">Saqlash</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

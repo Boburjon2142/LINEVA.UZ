@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% block title %}Buyurtmalar holati - LINEVA{% endblock %}
+{% block extra_css %}
+<style>
+  :root {
+    --primary: #692429;
+    --primary-light: #8a3a3a;
+    --primary-dark: #4a1a1a;
+    --secondary: #d4a574;
+    --light: #fdf6f0;
+    --dark: #2d3748;
+    --gray: #718096;
+    --light-gray: #e2e8f0;
+  }
+
+  body {
+    background-color: #fff;
+    color: var(--dark);
+  }
+
+  .orders-hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .orders-hero h1 {
+    font-size: 2.2rem;
+    color: var(--primary);
+  }
+
+  .orders-hero p {
+    color: var(--gray);
+    max-width: 600px;
+    margin: 10px auto 0;
+  }
+
+  .orders-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 25px;
+  }
+
+  .order-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    border-top: 4px solid var(--primary);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+  }
+
+  .order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 1px solid var(--light-gray);
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+  }
+
+  .customer-info h3 {
+    font-size: 1.3rem;
+    color: var(--primary);
+    margin-bottom: 5px;
+  }
+
+  .customer-info p,
+  .order-date,
+  .spec-value,
+  .status-text {
+    color: var(--gray);
+    font-size: 0.95rem;
+  }
+
+  .status-bar {
+    height: 8px;
+    background-color: var(--light-gray);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+
+  .status-progress {
+    height: 100%;
+    background-color: var(--primary);
+    border-radius: 4px;
+  }
+
+  .order-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .btn-small {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    flex: 1;
+  }
+
+  @media (max-width: 768px) {
+    .orders-container {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="orders-hero">
+  <h1>Buyurtmalar holati</h1>
+  <p>Oxirgi buyurtmalar bo'yicha jarayonni kuzating. Har bir karta dizayn egasi bilan bog'langan va real vaqt rejimida yangilanadi.</p>
+</div>
+<div class="orders-container">
+  {% for order in orders %}
+  <div class="order-card">
+    <div class="order-header">
+      <div class="customer-info">
+        <h3>{{ order.customer_name }}</h3>
+        <p>{{ order.customer_phone }}</p>
+      </div>
+      <div class="order-date">{{ order.created_at|date:"d.m.Y H:i" }}</div>
+    </div>
+    <div class="order-details">
+      <h4 class="design-title">Dizayn: {{ order.design.title }}</h4>
+      <div class="spec-item">
+        <span class="spec-label">Mato:</span>
+        <span class="spec-value">{{ order.fabric_type }}</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">Atelye:</span>
+        <span class="spec-value">{{ order.design.owner.atelier_name|default:"LINEVA atelye" }}</span>
+      </div>
+    </div>
+    <div class="order-status">
+      <div class="status-label">Jarayon holati:</div>
+      <div class="status-bar">
+        <div class="status-progress" style="width: {{ order.progress }}%"></div>
+      </div>
+      <div class="status-text">{{ order.get_status_display }} ({{ order.progress }}%)</div>
+      <div class="status-text text-danger fw-semibold">Tugash muddati: {{ order.due_days }} kun</div>
+    </div>
+    <div class="order-actions">
+      <a class="btn btn-outline btn-small" href="{{ order.design.get_absolute_url }}">Batafsil</a>
+      {% if order.design.owner.phone %}
+      <a class="btn btn-primary btn-small" href="tel:{{ order.design.owner.phone }}">Bog'lanish</a>
+      {% else %}
+      <button class="btn btn-primary btn-small" type="button" disabled>Telefon yo'q</button>
+      {% endif %}
+    </div>
+  </div>
+  {% empty %}
+  <p style="grid-column: 1/-1; text-align: center; color: var(--gray);">Hozircha buyurtmalar mavjud emas.</p>
+  {% endfor %}
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".btn").forEach((button) => {
+      button.addEventListener("mouseenter", function () {
+        this.style.transform = "translateY(-2px)";
+      });
+      button.addEventListener("mouseleave", function () {
+        this.style.transform = "translateY(0)";
+      });
+    });
+  });
+</script>
+{% endblock %}

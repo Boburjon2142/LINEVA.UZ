@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Dizaynlar - LINEVA{% endblock %}
+{% block extra_css %}
+<style>
+  :root {
+    --primary: #692429;
+    --light: #fdf6f0;
+    --gray: #718096;
+    --light-gray: #e2e8f0;
+  }
+
+  .profile-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 30px;
+  }
+
+  .profile-sidebar {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+  }
+
+  .profile-menu {
+    list-style: none;
+  }
+
+  .profile-menu li {
+    margin-bottom: 8px;
+  }
+
+  .profile-menu a {
+    display: block;
+    padding: 12px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #2d3748;
+  }
+
+  .profile-menu a.active {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .content-area {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+  }
+
+  .designs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+  }
+
+  .design-card {
+    border-top: 4px solid var(--primary);
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+
+  .design-image {
+    height: 200px;
+    background: linear-gradient(45deg, #f8f8f8, #e8e8e8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    position: relative;
+  }
+
+  .design-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .design-info {
+    padding: 20px;
+  }
+
+  .design-stats {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-top: 1px solid var(--light-gray);
+    color: var(--gray);
+    font-size: 0.9rem;
+  }
+
+  .design-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .add-design-card {
+    border: 2px dashed var(--light-gray);
+    background: var(--light);
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  @media (max-width: 968px) {
+    .profile-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="profile-layout">
+  <aside class="profile-sidebar">
+    <h5 class="mb-3">Kabinet</h5>
+    <ul class="profile-menu">
+      <li><a href="{% url 'owner_dashboard' %}">Umumiy ma'lumot</a></li>
+      <li><a href="{% url 'owner_designs' %}" class="active">Dizaynlarim</a></li>
+      <li><a href="{% url 'owner_orders' %}">Buyurtmalar</a></li>
+      <li><a href="{% url 'owner_profile' %}">Profil</a></li>
+      <li><a href="{% url 'owner_atelier' %}">Atelye sozlamalari</a></li>
+    </ul>
+  </aside>
+  <section class="content-area">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+      <div>
+        <h2 class="content-title mb-1">Dizaynlarim</h2>
+        <p class="text-muted mb-0">Har bir karta statistikasi va buyurtmalar sonini ko'ring.</p>
+      </div>
+    </div>
+    <div class="designs-grid">
+      {% for design in designs %}
+      <div class="design-card">
+        <div class="design-image">
+          {% if design.image %}
+          <img src="{{ design.image.url }}" alt="{{ design.title }}" />
+          {% else %}
+          LIBOS RASMI
+          {% endif %}
+        </div>
+        <div class="design-info">
+          <h3 class="design-title">{{ design.title }}</h3>
+          <p class="design-description text-muted">{{ design.description|truncatechars:140 }}</p>
+          <div class="design-stats">
+            <span>Ko'rishlar: <strong>{{ design.views_count }}</strong></span>
+            <span>Buyurtmalar: <strong>{{ design.order_count }}</strong></span>
+          </div>
+          <div class="design-actions">
+            <a href="{{ design.get_absolute_url }}" class="btn btn-outline btn-small">Galereyada ko'rish</a>
+            <a href="{% url 'owner_orders' %}?design={{ design.id }}" class="btn btn-primary btn-small">Buyurtmalar</a>
+          </div>
+          <div class="design-actions mt-2">
+            <a href="{% url 'owner_design_edit' design.pk %}" class="btn btn-outline btn-small">Tahrirlash</a>
+            <a href="{% url 'owner_design_delete' design.pk %}" class="btn btn-danger btn-small">O'chirish</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      <div class="add-design-card" onclick="window.location.href='{% url 'owner_design_create' %}'">
+        <div class="add-icon">+</div>
+        <div class="add-text">Yangi dizayn qo'shish</div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

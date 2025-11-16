@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ design.title }}{% endblock %}
+{% block content %}
+<div class="row gy-4">
+  <div class="col-lg-6">
+    <div class="ratio ratio-4x3 rounded-4 overflow-hidden shadow-sm">
+      <img src="{{ design.image.url }}" alt="{{ design.title }}" class="w-100 h-100 object-fit-cover">
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="d-flex flex-column h-100">
+      <div class="mb-4">
+        <span class="badge bg-secondary mb-2">Ko'rishlar: {{ design.views_count }}</span>
+        <h2 class="mb-2">{{ design.title }}</h2>
+        <p class="text-muted">{{ design.description }}</p>
+      </div>
+      <div class="d-flex flex-column gap-2 mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="fw-semibold text-primary fs-4">{{ design.price }} so'm</span>
+          <span class="text-muted">Buyurtmalar: {{ design.orders.count }}</span>
+        </div>
+        <a href="{% url 'design_order' design.pk %}" class="btn btn-primary btn-lg">Bu dizayn uchun buyurtma berish</a>
+      </div>
+      <div class="owner-card p-3 rounded-3 bg-light">
+        <h6 class="text-uppercase text-muted small mb-2">Atelye</h6>
+        <p class="mb-1 fw-semibold">{{ design.owner.atelier_name|default:"Noma'lum atelye" }}</p>
+        <p class="mb-0 text-muted">{{ design.owner.atelier_address }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Buyurtma #{{ order.pk }}{% endblock %}
+{% block content %}
+<div class="row gy-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between mb-3">
+          <div>
+            <h3 class="h5 mb-1">Buyurtma #{{ order.pk }}</h3>
+            <p class="text-muted mb-0">{{ order.created_at|date:"d.m.Y H:i" }}</p>
+          </div>
+          <span class="badge bg-secondary">{{ order.get_status_display }}</span>
+        </div>
+        <div class="progress mb-3" style="height: 12px;">
+          <div class="progress-bar bg-success" style="width: {{ order.progress }}%"></div>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="info-block">
+              <span class="text-muted small">Mijoz</span>
+              <p class="mb-0 fw-semibold">{{ order.customer_name }}</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="info-block">
+              <span class="text-muted small">Telefon</span>
+              <p class="mb-0">{{ order.customer_phone }}</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="info-block">
+              <span class="text-muted small">Dizayn</span>
+              <p class="mb-0">{{ order.design.title }}</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="info-block border border-danger">
+              <span class="text-muted small">Muddat</span>
+              <p class="mb-0 text-danger fw-semibold">{{ order.due_days }} kun</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="info-block">
+              <span class="text-muted small">Mato turi</span>
+              <p class="mb-0">{{ order.fabric_type }}</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="info-block">
+              <span class="text-muted small">Ko'krak</span>
+              <p class="mb-0">{{ order.size_chest }} sm</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="info-block">
+              <span class="text-muted small">Bel</span>
+              <p class="mb-0">{{ order.size_waist }} sm</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="info-block">
+              <span class="text-muted small">Bo'y</span>
+              <p class="mb-0">{{ order.size_height }} sm</p>
+            </div>
+          </div>
+          {% if order.notes %}
+          <div class="col-12">
+            <div class="info-block">
+              <span class="text-muted small">Izoh</span>
+              <p class="mb-0">{{ order.notes }}</p>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Holatni yangilash</h5>
+        <form method="post" class="vstack gap-3">
+          {% csrf_token %}
+          <div>
+            <label class="form-label">{{ form.status.label }}</label>
+            {{ form.status }}
+          </div>
+          <div>
+            <label class="form-label">{{ form.due_days.label }}</label>
+            {{ form.due_days }}
+          </div>
+          <button class="btn btn-primary" type="submit">Saqlash</button>
+          <a class="btn btn-link" href="{% url 'owner_orders' %}">Ortga</a>
+        </form>
+      </div>
+    </div>
+    <div class="card shadow-sm mt-3">
+      <div class="card-body">
+        <h6 class="text-muted text-uppercase small">Atelye</h6>
+        <p class="mb-1 fw-semibold">{{ order.design.owner.atelier_name }}</p>
+        <p class="text-muted mb-0">{{ order.design.owner.atelier_address }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block title %}Buyurtmalar - LINEVA{% endblock %}
+{% block extra_css %}
+<style>
+  :root {
+    --primary: #692429;
+    --primary-light: #8a3a3a;
+    --primary-dark: #4a1a1a;
+    --light: #fdf6f0;
+    --gray: #718096;
+    --light-gray: #e2e8f0;
+  }
+
+  .profile-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 30px;
+  }
+
+  .profile-sidebar {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    height: fit-content;
+  }
+
+  .profile-menu {
+    list-style: none;
+  }
+
+  .profile-menu li {
+    margin-bottom: 8px;
+  }
+
+  .profile-menu a {
+    display: block;
+    padding: 12px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #2d3748;
+  }
+
+  .profile-menu a.active {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .content-area {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+  }
+
+  .filters-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--light-gray);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .filter-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn-filter {
+    padding: 8px 16px;
+    background: var(--light);
+    border: 1px solid var(--light-gray);
+    color: var(--dark);
+    border-radius: 5px;
+  }
+
+  .btn-filter.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+
+  .orders-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .orders-table th {
+    background: var(--primary);
+    color: #fff;
+    padding: 15px 12px;
+    text-align: left;
+  }
+
+  .orders-table td {
+    padding: 15px 12px;
+    border-bottom: 1px solid var(--light-gray);
+  }
+
+  .status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn-action {
+    padding: 6px 12px;
+    border: 1px solid var(--primary);
+    border-radius: 4px;
+    background: #fff;
+    font-size: 0.85rem;
+    color: var(--primary);
+  }
+
+  @media (max-width: 968px) {
+    .profile-layout {
+      grid-template-columns: 1fr;
+    }
+    .orders-table {
+      display: block;
+      overflow-x: auto;
+    }
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="profile-layout">
+  <aside class="profile-sidebar">
+    <h5 class="mb-3">Kabinet</h5>
+    <ul class="profile-menu">
+      <li><a href="{% url 'owner_dashboard' %}">Umumiy ma'lumot</a></li>
+      <li><a href="{% url 'owner_designs' %}">Dizaynlarim</a></li>
+      <li><a href="{% url 'owner_orders' %}" class="active">Buyurtmalar</a></li>
+    </ul>
+  </aside>
+  <section class="content-area">
+    <div class="content-header">
+      <h2 class="content-title">Buyurtmalarni boshqarish</h2>
+      <p class="content-subtitle text-muted">Holatlar bo'yicha filtrlash va tafsilotlarni ko'rish.</p>
+    </div>
+    <div class="filters-section">
+      <div class="filter-buttons">
+        <a class="btn-filter {% if not active_status %}active{% endif %}" href="{% url 'owner_orders' %}">Barcha holatlar</a>
+        {% for value, label in statuses %}
+        <a
+          class="btn-filter {% if value == active_status %}active{% endif %}"
+          href="{% url 'owner_orders' %}?status={{ value }}"
+          >{{ label }}</a
+        >
+        {% endfor %}
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Mijoz</th>
+            <th>Dizayn</th>
+            <th>Mato</th>
+            <th>Telefon</th>
+            <th>Holat</th>
+            <th>Muddat</th>
+            <th>Vaqt</th>
+            <th>Amallar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr>
+            <td>
+              <div class="customer-info">
+                <span class="customer-name">{{ order.customer_name }}</span>
+                <span class="customer-phone text-muted">{{ order.customer_phone }}</span>
+              </div>
+            </td>
+            <td>{{ order.design.title }}</td>
+            <td class="text-muted">{{ order.fabric_type }}</td>
+            <td class="text-muted">{{ order.customer_phone }}</td>
+            <td><span class="status-badge">{{ order.get_status_display }}</span></td>
+            <td><span class="text-danger fw-semibold">{{ order.due_days }} kun</span></td>
+            <td class="text-muted">{{ order.created_at|date:"d.m.Y H:i" }}</td>
+            <td>
+              <div class="action-buttons">
+                <a class="btn-action" href="{% url 'owner_order_detail' order.pk %}">Batafsil</a>
+                {% if order.design.owner.phone %}
+                <a class="btn-action" href="tel:{{ order.design.owner.phone }}">Bog'lanish</a>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" class="text-center text-muted py-4">Buyurtmalar mavjud emas.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="page-footer text-muted">&copy; 2025 LINEVA - Barcha huquqlar himoyalangan.</div>
+  </section>
+</div>
+{% endblock %}

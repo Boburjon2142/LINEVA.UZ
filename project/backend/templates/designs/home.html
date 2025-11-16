@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+{% block title %}LINEVA - Orzuingizdagi libos{% endblock %}
+{% block extra_css %}
+<style>
+  :root {
+    --primary: #692429;
+    --primary-light: #8a3a3a;
+    --primary-dark: #4a1a1a;
+    --secondary: #d4a574;
+    --light: #fdf6f0;
+    --dark: #2d3748;
+    --gray: #718096;
+    --light-gray: #e2e8f0;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #fdf6f0 0%, #f8e9dd 100%);
+    padding: 80px 0;
+    text-align: center;
+    border-radius: 18px;
+    margin-bottom: 50px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: var(--primary);
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: var(--primary);
+  }
+
+  .hero p {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0 auto 30px;
+    color: var(--gray);
+  }
+
+  .hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .hero-buttons .btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  .section-title {
+    text-align: center;
+    margin: 60px 0 40px;
+    font-size: 2rem;
+    color: var(--primary);
+    position: relative;
+  }
+
+  .section-title::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 3px;
+    background-color: var(--primary);
+    margin: 10px auto 0;
+  }
+
+  .designs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+  }
+
+  .design-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-top: 4px solid var(--primary);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .design-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  .design-image {
+    height: 200px;
+    background: linear-gradient(45deg, #f8f8f8, #e8e8e8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .design-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .design-image::before {
+    content: "LIBOS RASMI";
+    position: absolute;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ccc;
+  }
+
+  .design-info {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .design-title {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: var(--dark);
+  }
+
+  .design-description {
+    color: var(--gray);
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+  }
+
+  .design-price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 15px;
+  }
+
+  .design-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: auto;
+  }
+
+  .btn-small {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    flex: 1;
+  }
+
+  .features {
+    background-color: var(--light);
+    padding: 60px 30px;
+    border-radius: 18px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+  }
+
+  .feature-card {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    border-top: 3px solid var(--primary);
+  }
+
+  .feature-icon {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 {
+      font-size: 2rem;
+    }
+
+    .hero-buttons .btn {
+      width: 200px;
+    }
+  }
+</style>
+{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-content">
+    <h1>LINEVA bilan orzudagi libosni toping</h1>
+    <p>
+      Mahalliy atelyelar joylagan eksklyuziv dizaynlar, real vaqtda buyurtma statusi va qulay boshqaruv — barchasi bitta
+      platformada.
+    </p>
+    <div class="hero-buttons">
+      <a class="btn btn-primary" href="#designs">Dizaynlarni ko'rish</a>
+      <a class="btn btn-outline" href="{% url 'owner_register' %}">Atelye sifatida qo'shiling</a>
+    </div>
+  </div>
+</section>
+<section id="designs">
+  <h2 class="section-title">Trenddagi dizaynlar</h2>
+  <p style="text-align: center; margin-bottom: 40px; color: var(--gray);">
+  </p>
+  <div class="designs-grid">
+    {% for design in designs %}
+    <div class="design-card" onclick="window.location.href='{{ design.get_absolute_url }}'">
+      <div class="design-image">
+        {% if design.image %}
+        <img src="{{ design.image.url }}" alt="{{ design.title }}" />
+        {% endif %}
+      </div>
+      <div class="design-info">
+        <h3 class="design-title">{{ design.title }}</h3>
+        <p class="design-description">{{ design.description|truncatechars:120 }}</p>
+        <div class="design-price">{{ design.price }} so'm</div>
+        <div class="design-actions">
+          <a class="btn btn-outline btn-small" href="{{ design.get_absolute_url }}">Batafsil</a>
+          <a class="btn btn-primary btn-small" href="{% url 'design_order' design.pk %}">Buyurtma</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p style="grid-column: 1/-1; text-align: center; color: var(--gray);">Hozircha dizaynlar qo'shilmagan.</p>
+    {% endfor %}
+  </div>
+</section>
+<section class="features mt-5">
+  <h2 class="section-title">Platforma afzalliklari</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🛒</div>
+      <h3>Dizayn kartalari orqali buyurtma</h3>
+      <p>Oson va tez buyurtma berish imkoniyati</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📈</div>
+      <h3>O'suvchi marketplace statistikasi</h3>
+      <p>Doimiy ravishda rivojlanayotgan platforma</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">👤</div>
+      <h3>Atelye egalari uchun shaxsiy kabinet</h3>
+      <p>Shaxsiy hisobingiz orqali boshqarish</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Progress barli buyurtma kuzatuv</h3>
+      <p>Buyurtma holatini real vaqtda kuzatish</p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".btn").forEach((button) => {
+      button.addEventListener("mouseenter", function () {
+        this.style.transform = "translateY(-2px)";
+      });
+      button.addEventListener("mouseleave", function () {
+        this.style.transform = "translateY(0)";
+      });
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+{% block title %}Kabinet - LINEVA{% endblock %}
+{% block extra_css %}
+<style>
+  :root {
+    --primary: #692429;
+    --primary-dark: #4a1a1a;
+    --light: #fdf6f0;
+    --gray: #718096;
+    --light-gray: #e2e8f0;
+  }
+
+  .dashboard-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+  }
+
+  .profile-sidebar {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+  }
+
+  .profile-header {
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--light-gray);
+    padding-bottom: 15px;
+  }
+
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0 auto 15px;
+  }
+
+  .profile-menu {
+    list-style: none;
+  }
+
+  .profile-menu li {
+    margin-bottom: 10px;
+  }
+
+  .profile-menu a {
+    display: block;
+    padding: 12px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #2d3748;
+    transition: 0.3s;
+  }
+
+  .profile-menu a:hover {
+    background: var(--light);
+    color: var(--primary);
+  }
+
+  .profile-menu a.active {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .quick-stats {
+    background: var(--light);
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+  }
+
+  .quick-stats .stat-value {
+    font-size: 1.3rem;
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .dashboard-content {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+
+  .stat-card {
+    border-top: 4px solid var(--primary);
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+  }
+
+  .stat-title {
+    font-size: 1.1rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+  }
+
+  .stat-number {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+  }
+
+  .recent-list {
+    list-style: none;
+    margin-top: 15px;
+    border-top: 1px solid var(--light-gray);
+  }
+
+  .recent-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--light-gray);
+  }
+
+  .recent-item:last-child {
+    border-bottom: none;
+  }
+
+  @media (max-width: 968px) {
+    .dashboard-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  <aside class="profile-sidebar">
+    <div class="profile-header">
+      <div class="profile-avatar">{{ user.full_name|default:user.username|first|upper }}</div>
+      <h3 class="profile-name">{{ user.atelier_name|default:user.full_name }}</h3>
+      <p class="profile-role">{{ user.atelier_address|default:"Manzil belgilanmagan" }}</p>
+    </div>
+    <ul class="profile-menu">
+      <li><a href="{% url 'owner_dashboard' %}" class="active">Umumiy ma'lumot</a></li>
+      <li><a href="{% url 'owner_designs' %}">Dizaynlarim</a></li>
+      <li><a href="{% url 'owner_orders' %}">Buyurtmalar</a></li>
+      <li><a href="{% url 'owner_profile' %}">Profil</a></li>
+      <li><a href="{% url 'owner_atelier' %}">Atelye sozlamalari</a></li>
+    </ul>
+    <div class="quick-stats">
+      <div class="stat-value">{{ total_views }} ko'rish | {{ total_orders }} buyurtma</div>
+      <div class="stat-label text-muted">Umumiy faollik</div>
+    </div>
+  </aside>
+  <section class="dashboard-content">
+    <h2 class="content-title mb-4">Kabinet statistikasi</h2>
+    <div class="stats-grid mb-4">
+      <div class="stat-card">
+        <div class="stat-title">📊 Jami dizaynlar</div>
+        <div class="stat-number">{{ total_designs }}</div>
+        <p class="text-muted">Platformadagi barcha dizaynlaringiz</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">📦 Jami buyurtmalar</div>
+        <div class="stat-number">{{ total_orders }}</div>
+        <p class="text-muted">Barcha vaqt davomida qabul qilingan buyurtmalar</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">🕒 So'nggi buyurtmalar</div>
+        <ul class="recent-list">
+          {% for order in recent_orders %}
+          <li class="recent-item">
+            <span>{{ order.customer_name }}</span>
+            <span class="text-muted">{{ order.get_status_display }}</span>
+          </li>
+          {% empty %}
+          <li class="recent-item text-muted">Buyurtmalar mavjud emas.</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">⚙️ Buyurtmalar holati</div>
+        <ul class="recent-list">
+          {% for status in orders_by_status %}
+          <li class="recent-item">
+            <span>{{ status.status }}</span>
+            <span class="text-muted">{{ status.count }} ta</span>
+          </li>
+          {% empty %}
+          <li class="recent-item text-muted">Statistikalar mavjud emas.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-title">📈 Dizayn statistikasi</div>
+      <ul class="recent-list">
+        {% for design in design_stats %}
+        <li class="recent-item">
+          <span>{{ design.title }}</span>
+          <span class="text-muted">{{ design.views_count }} ko'rish | {{ design.order_count }} buyurtma</span>
+        </li>
+        {% empty %}
+        <li class="recent-item text-muted">Dizaynlar mavjud emas.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+</div>
+{% endblock %}

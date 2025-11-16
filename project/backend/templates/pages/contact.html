@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Aloqa - LINEVA{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <h1 class="mb-4">Biz bilan bog'laning</h1>
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5>Kontakt ma'lumotlari</h5>
+        <p class="mb-1"><strong>Email:</strong> <a href="mailto:boburjonabduganiyev83@gmail.com">boburjonabduganiyev83@gmail.com</a></p>
+        <p class="mb-0"><strong>Telefon:</strong> <a href="tel:+998919630770">+998 91 963 07 70</a></p>
+      </div>
+    </div>
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5>Qisqa xabar yuborish</h5>
+        <p class="text-muted">Quyidagi formadan foydalanib savollaringizni qoldiring.</p>
+        <form action="mailto:boburjonabduganiyev83@gmail.com" method="post" enctype="text/plain">
+          <div class="mb-3">
+            <label class="form-label">Ism sharif</label>
+            <input type="text" name="full_name" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Elektron pochta</label>
+            <input type="email" name="email" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Xabar</label>
+            <textarea name="message" class="form-control" rows="4" required></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit">Yuborish</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
