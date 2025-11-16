@@ -7,20 +7,150 @@
     <title>{% block title %}LINEVA{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+      .lineva-header {
+        background-color: #fff;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .lineva-header .header-container {
+        padding: 15px 0;
+      }
+      .lineva-header .logo {
+        font-size: 28px;
+        font-weight: 700;
+        color: #692429;
+        text-decoration: none;
+      }
+      .lineva-header .nav-toggle {
+        display: none;
+        background: none;
+        border: 2px solid #692429;
+        color: #692429;
+        border-radius: 6px;
+        padding: 6px 10px;
+        font-weight: 600;
+      }
+      .lineva-header .nav-menu {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        gap: 20px;
+      }
+      .lineva-header .nav-menu a {
+        text-decoration: none;
+        color: #2d3748;
+        font-weight: 500;
+      }
+      .lineva-header .nav-menu a:hover {
+        color: #692429;
+      }
+      .lineva-header .nav-menu.collapse:not(.show) {
+        display: none;
+      }
+      .lineva-header .nav-menu.collapse.show {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+        margin-top: 15px;
+      }
+      @media (min-width: 992px) {
+        #navMenu.collapse {
+          display: flex !important;
+          flex-direction: row;
+          flex-wrap: wrap;
+          gap: 20px;
+          width: auto;
+          margin-top: 0;
+        }
+      }
+      .lineva-header .user-actions .btn {
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-weight: 600;
+      }
+      .lineva-header .nav-toggle-icon {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        align-items: center;
+      }
+      .lineva-header .nav-toggle-icon span {
+        width: 24px;
+        height: 2px;
+        background-color: #692429;
+        display: block;
+      }
+      @media (max-width: 992px) {
+        .lineva-header .header-container {
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-items: center;
+        }
+        .lineva-header .logo {
+          flex: 1 1 auto;
+        }
+        .lineva-header .nav-toggle {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          margin-left: auto;
+        }
+        .lineva-header .nav-menu.collapse.show {
+          width: 100%;
+        }
+      }
+      .lineva-footer {
+        background-color: #692429;
+        color: #fff;
+        padding: 40px 0 20px;
+      }
+      .lineva-footer,
+      .lineva-footer a,
+      .lineva-footer h6,
+      .lineva-footer p {
+        color: #fff;
+      }
+    </style>
     {% block extra_css %}{% endblock %}
   </head>
   <body>
     <header class="lineva-header">
       <div class="container header-container d-flex flex-wrap align-items-center justify-content-between gap-3">
         <a href="{% url 'landing' %}" class="logo">LINEVA</a>
-        <ul class="nav-menu">
+        <button class="nav-toggle d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Navigatsiyani almashtirish">
+          <span class="nav-toggle-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+        <ul class="nav-menu collapse d-lg-flex list-unstyled flex-wrap gap-3 mb-0" id="navMenu">
           <li><a href="{% url 'landing' %}">Bosh sahifa</a></li>
           <li><a href="{% url 'orders_public' %}">Buyurtma holati</a></li>
           <li><a href="{% url 'owner_dashboard' %}">Kabinet</a></li>
           <li><a href="{% url 'owner_designs' %}">Dizaynlar</a></li>
           <li><a href="{% url 'owner_orders' %}">Buyurtmalar</a></li>
+          <li class="d-lg-none mt-2">
+            <div class="d-flex flex-column gap-2">
+              {% if user.is_authenticated and user.is_owner %}
+              <form method="post" action="{% url 'owner_logout' %}">
+                {% csrf_token %}
+                <button class="btn btn-outline w-100">Chiqish</button>
+              </form>
+              <a class="btn btn-primary w-100" href="{% url 'owner_dashboard' %}">Profil</a>
+              {% else %}
+              <a class="btn btn-outline w-100" href="{% url 'owner_login' %}">Atelye egalari</a>
+              <a class="btn btn-primary w-100" href="{% url 'owner_register' %}">Ro'yxatdan o'tish</a>
+              {% endif %}
+            </div>
+          </li>
         </ul>
-        <div class="user-actions">
+        <div class="user-actions d-none d-lg-flex gap-2">
           {% if user.is_authenticated and user.is_owner %}
           <form method="post" action="{% url 'owner_logout' %}">
             {% csrf_token %}
@@ -43,37 +173,21 @@
     <footer class="lineva-footer mt-5">
       <div class="container">
         <div class="footer-content">
-          <div class="footer-section">
+          <div class="footer-section primary">
             <div class="footer-logo">LINEVA</div>
-            <p>Orzuingizdagi libosni toping.</p>
+            <p class="footer-description">
+              Mahalliy atelye egalari va mijozlarni bog'lovchi platforma. Orzudagi liboslar shu yerda yaratiladi.
+            </p>
           </div>
-          <div class="footer-section">
-            <h6>Foydali havolalar</h6>
-            <div class="footer-links">
-              <a href="{% url 'landing' %}">Bosh sahifa</a>
-              <a href="{% url 'orders_public' %}">Buyurtma holati</a>
-              <a href="{% url 'owner_dashboard' %}">Kabinet</a>
-              <a href="{% url 'owner_designs' %}">Dizaynlar</a>
-              <a href="{% url 'owner_orders' %}">Buyurtmalar</a>
-            </div>
-          </div>
-          <div class="footer-section">
-            <h6>Yordam</h6>
-            <div class="footer-links">
-              <a href="{% url 'faq' %}">FAQ</a>
-              <a href="{% url 'guide' %}">Qo'llanma</a>
-              <a href="{% url 'contact' %}">Aloqa</a>
-            </div>
-          </div>
-          <div class="footer-section">
+          <div class="footer-section contact">
             <h6>Biz bilan bog'laning</h6>
-            <div class="footer-links">
-              <a href="mailto:boburjonabduganiyev83@gmail.com">boburjonabduganiyev83@gmail.com</a>
-              <a href="tel:+998919630770">+998 91 963 07 70</a>
+            <div class="footer-links" style="display:flex; flex-direction:column; gap:8px; text-align:left;">
+              <a href="mailto:boburjonabduganiyev83@gmail.com" style="text-decoration:none">boburjonabduganiyev83@gmail.com</a>
+              <a href="tel:+998919630770" style="text-decoration:none">+998 91 963 07 70</a>
             </div>
           </div>
         </div>
-        <div class="copyright">&copy; 2025 LINEVA - Barcha huquqlar himoyalangan.</div>
+        <div class="copyright" style="text-align:center; margin-top:6px">&copy; 2025 LINEVA - Barcha huquqlar himoyalangan.</div>
       </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
